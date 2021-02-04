@@ -73,14 +73,12 @@ typedef struct {
     cmdargs_t _args;
 } cmdapp_t;
 
-// Initializes a cmdapp_t with the given program environment and mode.
-void cmdapp_init(cmdapp_t* app, int argc, char** argv, cmdapp_mode_t mode);
+// Initializes a cmdapp_t with the given program environment, mode and metadata.
+void cmdapp_init(cmdapp_t* app, int argc, char** argv, cmdapp_mode_t mode,
+                 const cmdapp_info_t* info);
 
 // Destroys the given cmdapp_t. Any subsequent member access is undefined.
 void cmdapp_destroy(cmdapp_t* app);
-
-// Sets the cmdapp_t's info for automatic help and version generation
-void cmdapp_info(cmdapp_t* app, cmdapp_info_t info);
 
 // Registers an option to the app with the given values and flags
 void cmdapp_set(cmdapp_t* app, char shorto, const char* longo, uint8_t flags,

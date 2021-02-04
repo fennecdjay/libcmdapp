@@ -38,7 +38,8 @@ static inline size_t _argvlen(void** argv) {
     return length;
 }
 
-void cmdapp_init(cmdapp_t* app, int argc, char** argv, cmdapp_mode_t mode) {
+void cmdapp_init(cmdapp_t* app, int argc, char** argv, cmdapp_mode_t mode,
+                 const cmdapp_info_t* info) {
     app->_argc = argc;
     app->_argv = argv;
     app->_mode = mode;
@@ -47,19 +48,16 @@ void cmdapp_init(cmdapp_t* app, int argc, char** argv, cmdapp_mode_t mode) {
     app->_start = malloc(sizeof(cmdarg_internal_t*) * app->_capacity);
     app->_args.length = 0;
     app->_args.contents = NULL;
+    app->_info = *info;
 }
 
 void cmdapp_destroy(cmdapp_t* app) {
-    free(app->_start);
-    free(app->_args.contents);
-    app->_args.contents = NULL;
-}
-
-void cmdapp_info(cmdapp_t* app, cmdapp_info_t info) {
     for (size_t i = 0; i < app->_length; i++) {
         free(app->_start[app->_length]);
     }
-    app->_info = info;
+    free(app->_start);
+    free(app->_args.contents);
+    app->_args.contents = NULL;
 }
 
 static void cmdapp_append(cmdapp_t* app, cmdarg_internal_t* arg_int) {
@@ -193,6 +191,13 @@ int cmdapp_run(cmdapp_t* app) {
                     }
                 }
             } else {
+                if (strcmp(current, "--help") == 0) {
+                    cmdapp_print_help(app);
+                    return EXIT_SUCCESS;
+                } else if (strcmp(current, "--version") == 0) {
+                    cmdapp_print_version(app);
+                    return EXIT_SUCCESS;
+                }
                 eprintf("Unrecognized command line option %s\n", current);
                 return EXIT_FAILURE;
             }

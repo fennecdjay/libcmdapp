@@ -50,8 +50,6 @@ void handle_options(cmdopt_t* file, cmdopt_t* eval) {
 
 int main(int argc, char* argv[]) {
     cmdapp_t app;
-    cmdapp_init(&app, argc, argv, CMDAPP_MODE_SHORTARG);
-
     const cmdapp_info_t info = {
         .program = "main",
         .version = "1.0",
@@ -63,7 +61,7 @@ int main(int argc, char* argv[]) {
         "This is free software: you are free to change and redistribute it.\n"
         "There is NO WARRANTY, to the extent permitted by law.\n"
     };
-    cmdapp_info(&app, info);
+    cmdapp_init(&app, argc, argv, CMDAPP_MODE_SHORTARG, &info);
 
     cmdopt_t file, eval;
     setup_options(&app, &file, &eval);
