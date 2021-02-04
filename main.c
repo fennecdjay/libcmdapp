@@ -25,7 +25,7 @@ void setup_options(cmdapp_t* app, cmdopt_t* file, cmdopt_t* eval) {
         'f',
         "file",
         CMDOPT_TAKESARG,
-        file_confl /* either accepts file or in-command text */,
+        NULL /* either accepts file or in-command text. NULL because not implemented */,
         "Does nothing with a file",
         file
     );
@@ -34,7 +34,7 @@ void setup_options(cmdapp_t* app, cmdopt_t* file, cmdopt_t* eval) {
         'e',
         "eval",
         CMDOPT_TAKESARG,
-        eval_confl /* either accepts file or in-command text */,
+        NULL /* either accepts file or in-command text. NULL because not implemented */,
         "Does nothing with a script",
         eval
     );

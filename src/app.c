@@ -77,7 +77,9 @@ void cmdapp_set(cmdapp_t* app, char shorto, const char* longo, uint8_t flags,
     option->longo = longo;
     option->flags = flags;
     option->value = NULL;
-    const size_t conflict_count = (conflicts == NULL) ? 1 : _argvlen((void**)conflicts);
+    const size_t conflict_count = (conflicts == NULL)
+                                      ? 1
+                                      : _argvlen((void**)conflicts);
     const size_t size = sizeof(cmdarg_internal_t)
                         + conflict_count * sizeof(cmdopt_t*);
     cmdarg_internal_t* arg_int = malloc(size);
