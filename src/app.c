@@ -49,6 +49,7 @@ void cmdapp_init(cmdapp_t* app, int argc, char** argv, cmdapp_mode_t mode,
     app->_args.length = 0;
     app->_args.contents = NULL;
     app->_info = *info;
+    app->_proc = NULL;
 }
 
 void cmdapp_destroy(cmdapp_t* app) {
@@ -187,6 +188,9 @@ int cmdapp_run(cmdapp_t* app) {
         app->_args.contents = realloc(app->_args.contents, \
                                       sizeof(char*) * args_cap); \
     } \
+    if (app->proc) { \
+        proc(NULL, arg, true); \
+    } \
     app->_args.contents[app->_args.length++] = arg;
 
     bool only_args = false;
@@ -236,6 +240,9 @@ int cmdapp_run(cmdapp_t* app) {
                 return EXIT_FAILURE;
             }
             arg_int->result->flags |= CMDOPT_EXISTS;
+            if (app->proc) {
+                proc(arg_int, NULL, false);
+            }
         } else if (IS_SHORT_FLAG(current)) {
             if (app->_mode | CMDAPP_MODE_SHORTARG) {
                 if ((arg_int = cmdapp_search(app, current[1], NULL))) {
@@ -259,6 +266,9 @@ int cmdapp_run(cmdapp_t* app) {
                     return EXIT_FAILURE;
                 }
                 arg_int->result->flags |= CMDOPT_EXISTS;
+                if (app->proc) {
+                    proc(arg_int, NULL, false);
+                }
             } else /* app->_mode | CMDAPP_MODE_MULTIFLAG */ {
                 for (size_t j = 1; current[j]; j++) {
                     if ((arg_int = cmdapp_search(app, current[1], NULL))) {

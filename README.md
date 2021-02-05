@@ -25,6 +25,12 @@ mode | behavior
 
 If you do not set these as options, libcmdarg will use various information to automatically generate responses in such a way that `help2man` will work.
 
+**5. Proceeding AND procedural parsing**
+
+Not only does `cmdapp_run` terminate with all options and arguments in the proper state, it also calls optional functions *as it parses*. This allows for repeated options and usage of args sensitive to positioning of options.
+
+If you have a interface like `-Dfoo file1 -Dbar file1` which will analyze `file1` twice with different definitions, using proceeding parsing will give you `-D=bar` and args=`file1, file1`. However, with procedural parsing you will get: `-D=foo`, `file1`, `-D=bar`, `file1`. It's also important to note that the `cmdopt_t`s on the user side will be set as well, so you can refer to as many of them as you want when you come across an arg. This is useful if you have `-a -b file1 -a file1` and you want the first analysis of `file1` to be in both modes `a` and `b`.
+
 ### Usage
 
 You can initialize an app object with:
