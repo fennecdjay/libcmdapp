@@ -48,6 +48,14 @@ void handle_options(cmdopt_t* file, cmdopt_t* eval) {
     }
 }
 
+void myproc(cmdopt_t* option, const char* arg, bool is_plain_arg) {
+    if (is_plain_arg) {
+        printf("arg: %s\n", arg);
+    } else {
+        printf("-%c%s\n", option->shorto, option->value);
+    }
+}
+
 int main(int argc, char* argv[]) {
     cmdapp_t app;
     const char* custom_synopses[] = {
@@ -69,7 +77,7 @@ int main(int argc, char* argv[]) {
         "There is NO WARRANTY, to the extent permitted by law.\n"
     };
     cmdapp_init(&app, argc, argv, CMDAPP_MODE_SHORTARG, &info);
-
+    cmdapp_enable_procedure(&app, myproc);
     cmdopt_t file, eval;
     setup_options(&app, &file, &eval);
 

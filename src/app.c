@@ -95,6 +95,10 @@ void cmdapp_set(cmdapp_t* app, char shorto, const char* longo, uint8_t flags,
     cmdapp_append(app, arg_int);
 }
 
+void cmdapp_enable_procedure(cmdapp_t* app, cmdapp_procedure_t proc) {
+    app->_proc = proc;
+}
+
 void cmdapp_print_help(cmdapp_t* app) {
     if (app->_info.synopses && *app->_info.synopses) {
         printf("Usage: %s %s\n", app->_argv[0], *app->_info.synopses);
@@ -188,8 +192,8 @@ int cmdapp_run(cmdapp_t* app) {
         app->_args.contents = realloc(app->_args.contents, \
                                       sizeof(char*) * args_cap); \
     } \
-    if (app->proc) { \
-        proc(NULL, arg, true); \
+    if (app->_proc) { \
+        app->_proc(NULL, arg, true); \
     } \
     app->_args.contents[app->_args.length++] = arg;
 
@@ -240,8 +244,8 @@ int cmdapp_run(cmdapp_t* app) {
                 return EXIT_FAILURE;
             }
             arg_int->result->flags |= CMDOPT_EXISTS;
-            if (app->proc) {
-                proc(arg_int, NULL, false);
+            if (app->_proc) {
+                app->_proc(arg_int->result, NULL, false);
             }
         } else if (IS_SHORT_FLAG(current)) {
             if (app->_mode | CMDAPP_MODE_SHORTARG) {
@@ -249,10 +253,10 @@ int cmdapp_run(cmdapp_t* app) {
                     arg_int->result->value = NULL;
                     if (arg_int->result->flags | CMDOPT_TAKESARG) {
                         arg_int->result->value = current + 2;
-                        if (next && next[0] != '-') {
+                        if (!current[2] && next && next[0] != '-') {
                             arg_int->result->value = next;
                             i++;
-                        } else {
+                        } else if (current[2] == 0) {
                             eprintf("-%c expects an argument\n", current[1]);
                             return EXIT_FAILURE;
                         }
@@ -266,8 +270,8 @@ int cmdapp_run(cmdapp_t* app) {
                     return EXIT_FAILURE;
                 }
                 arg_int->result->flags |= CMDOPT_EXISTS;
-                if (app->proc) {
-                    proc(arg_int, NULL, false);
+                if (app->_proc) {
+                    app->_proc(arg_int->result, NULL, false);
                 }
             } else /* app->_mode | CMDAPP_MODE_MULTIFLAG */ {
                 for (size_t j = 1; current[j]; j++) {

@@ -63,6 +63,8 @@ typedef struct {
     const char** contents;
 } cmdargs_t;
 
+typedef void (*cmdapp_procedure_t)(cmdopt_t* option, const char* arg, bool is_plain_arg);
+
 typedef struct {
     int _argc;
     char** _argv;
@@ -72,10 +74,8 @@ typedef struct {
     size_t _capacity;
     cmdopt_internal_t** _start;
     cmdargs_t _args;
-    cmdapp_procedure _proc;
+    cmdapp_procedure_t _proc;
 } cmdapp_t;
-
-typedef void (*cmdapp_procedure)(cmdopt_t* option, const char* arg, bool is_plain_arg);
 
 // Initializes a cmdapp_t with the given program environment, mode and metadata.
 void cmdapp_init(cmdapp_t* app, int argc, char** argv, cmdapp_mode_t mode,
@@ -99,7 +99,7 @@ void cmdapp_print_version(cmdapp_t* app);
 
 // Sets the cmdapp_t's procedural parsing function to the given function. If set
 // to NULL, it disables procedural parsing (default).
-void cmdapp_enable_procedure(cmdapp_t* app, cmdapp_procedure proc);
+void cmdapp_enable_procedure(cmdapp_t* app, cmdapp_procedure_t proc);
 
 // Returns EXIT_SUCCESS on success and EXIT_FAILURE otherwise (printing a
 // diagnostic to stderr if configured)
