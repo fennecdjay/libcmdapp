@@ -105,9 +105,11 @@ void cmdapp_print_help(cmdapp_t* app) {
     }
     printf("\n");
     printf("%s\n", app->_info.description);
+    if (!app->_length)
+        return;
     printf("\n");
     printf("Options:\n");
-    for (int i = 0; i < app->_argc; i++) {
+    for (size_t i = 0; i < app->_length; i++) {
         cmdarg_internal_t* arg_int = app->_start[i];
         printf("                    %s\r", arg_int->description);
         printf("  -%c", arg_int->result->shorto);
@@ -148,6 +150,29 @@ static cmdarg_internal_t* cmdapp_search(cmdapp_t* app, char shorto, const char* 
     ((str)[0] == '-' && (str)[1] == '-' && (str)[2] == 0)
 #define IS_LONG_FLAG(str) ((str)[0] == '-' && (str)[1] == '-')
 #define IS_SHORT_FLAG(str) ((str)[0] == '-')
+
+static int cmdapp_resolve_options(cmdapp_t* app) {
+    for (size_t i = 0; i < app->_length; i++) {
+        cmdarg_internal_t* arg_int = app->_start[i];
+        if (!cmdopt_exists(*arg_int->result)) continue;
+        if (!cmdopt_is_optional(*arg_int->result)) {
+            eprintf("Required option -%c not passed\n",
+                    arg_int->result->shorto);
+            return EXIT_FAILURE;
+        }
+        cmdopt_t** conflicts = arg_int->conflicts;
+        if (conflicts) {
+            for (size_t i = 0; conflicts[i]; i++) {
+                if (cmdopt_exists(*conflicts[i])) {
+                    eprintf("Cannot pass both -%c and -%c\n",
+                            arg_int->result->shorto, conflicts[i]->shorto);
+                    return EXIT_FAILURE;
+                }
+            }
+        }
+    }
+    return EXIT_SUCCESS;
+}
 
 int cmdapp_run(cmdapp_t* app) {
     if (app->_args.contents != NULL) {
@@ -259,6 +284,11 @@ int cmdapp_run(cmdapp_t* app) {
         }
     }
     #undef APPEND_ARG
+
+    if (cmdapp_resolve_options(app) != EXIT_SUCCESS) {
+        return EXIT_FAILURE;
+    }
+
     return EXIT_SUCCESS;
 }
 
