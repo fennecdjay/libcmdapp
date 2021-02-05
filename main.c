@@ -38,6 +38,15 @@ void setup_options(cmdapp_t* app, cmdopt_t* file, cmdopt_t* eval) {
         "Does nothing with a script",
         eval
     );
+    cmdapp_set(
+        app,
+        'a',
+        "file2",
+        CMDOPT_EXISTS,
+        file_confl /* either accepts file or in-command text. NULL because not implemented */,
+        "Does nothing with a file (again)",
+        file
+    );
 }
 
 void handle_options(cmdopt_t* file, cmdopt_t* eval) {
