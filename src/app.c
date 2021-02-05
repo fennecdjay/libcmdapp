@@ -95,7 +95,14 @@ void cmdapp_set(cmdapp_t* app, char shorto, const char* longo, uint8_t flags,
 }
 
 void cmdapp_print_help(cmdapp_t* app) {
-    printf("Usage: %s [OPTION]... ARG...\n", app->_argv[0]);
+    if (app->_info.synopses && *app->_info.synopses) {
+        printf("Usage: %s %s\n", app->_argv[0], *app->_info.synopses);
+        for (size_t i = 1; app->_info.synopses[i]; i++) {
+            printf("   or: %s %s\n", app->_argv[0], app->_info.synopses[i]);
+        }
+    } else {
+        printf("Usage: %s [OPTION]... ARG...\n", app->_argv[0]);
+    }
     printf("\n");
     printf("%s\n", app->_info.description);
     printf("\n");

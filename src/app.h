@@ -50,6 +50,7 @@ typedef struct _cmdopt_internal_t cmdopt_internal_t;
 
 typedef struct {
     const char* program;
+    const char** synopses;
     const char* version;
     const char* author;
     int year;

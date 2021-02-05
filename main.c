@@ -38,15 +38,6 @@ void setup_options(cmdapp_t* app, cmdopt_t* file, cmdopt_t* eval) {
         "Does nothing with a script",
         eval
     );
-    cmdapp_set(
-        app,
-        'a',
-        "file2",
-        CMDOPT_EXISTS,
-        file_confl /* either accepts file or in-command text. NULL because not implemented */,
-        "Does nothing with a file (again)",
-        file
-    );
 }
 
 void handle_options(cmdopt_t* file, cmdopt_t* eval) {
@@ -59,8 +50,15 @@ void handle_options(cmdopt_t* file, cmdopt_t* eval) {
 
 int main(int argc, char* argv[]) {
     cmdapp_t app;
+    const char* custom_synopses[] = {
+        "subcommand1 [OPTION]...",
+        "subcommand2 [OPTION]... FILE...",
+        NULL
+    };
     const cmdapp_info_t info = {
         .program = "main",
+        // .synopses = NULL, // so it's automatic
+        .synopses = custom_synopses,
         .version = "1.0",
         .author = "*lolptr",
         .year = 2021,
