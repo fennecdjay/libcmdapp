@@ -55,6 +55,7 @@ typedef struct {
     const char* author;
     int year;
     const char* description;
+    int help_des_offset;
     const char* ver_extra;
 } cmdapp_info_t;
 

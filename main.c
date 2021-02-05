@@ -71,6 +71,7 @@ int main(int argc, char* argv[]) {
         .author = "*lolptr",
         .year = 2021,
         .description = "A program that does nothing.",
+        .help_des_offset = 20,
         .ver_extra =
         "License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>\n"
         "This is free software: you are free to change and redistribute it.\n"

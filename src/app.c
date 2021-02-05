@@ -116,7 +116,7 @@ void cmdapp_print_help(cmdapp_t* app) {
     printf("Options:\n");
     for (size_t i = 0; i < app->_length; i++) {
         cmdarg_internal_t* arg_int = app->_start[i];
-        printf("                    %s\r", arg_int->description);
+        printf("%*s%s\r", app->_info.help_des_offset, "", arg_int->description);
         printf("  -%c", arg_int->result->shorto);
         if (arg_int->result->longo) {
             printf(", --%s", arg_int->result->longo);
