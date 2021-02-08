@@ -59,8 +59,8 @@ void myproc(cmdopt_t* option, const char* arg, bool is_plain_arg) {
 int main(int argc, char* argv[]) {
     cmdapp_t app;
     const char* custom_synopses[] = {
-        "subcommand1 [OPTION]...",
-        "subcommand2 [OPTION]... FILE...",
+        "subcommand [OPTION]...",
+        "[OPTION]... FILE...",
         NULL
     };
     const cmdapp_info_t info = {

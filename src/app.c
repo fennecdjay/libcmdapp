@@ -80,7 +80,7 @@ void cmdapp_set(cmdapp_t* app, char shorto, const char* longo, uint8_t flags,
     option->value = NULL;
     const size_t conflict_count = (conflicts == NULL)
                                       ? 1
-                                      : _argvlen((void**)conflicts);
+                                      : _argvlen((void**)conflicts) + 1;
     const size_t size = sizeof(cmdarg_internal_t)
                         + conflict_count * sizeof(cmdopt_t*);
     cmdarg_internal_t* arg_int = malloc(size);
@@ -166,13 +166,12 @@ static int cmdapp_resolve_options(cmdapp_t* app) {
             return EXIT_FAILURE;
         }
         cmdopt_t** conflicts = arg_int->conflicts;
-        if (conflicts) {
-            for (size_t i = 0; conflicts[i]; i++) {
-                if (cmdopt_exists(*conflicts[i])) {
-                    eprintf("Cannot pass both -%c and -%c\n",
-                            arg_int->result->shorto, conflicts[i]->shorto);
-                    return EXIT_FAILURE;
-                }
+        if (!conflicts) continue;
+        for (size_t i = 0; conflicts[i]; i++) {
+            if (cmdopt_exists(*conflicts[i])) {
+                eprintf("Cannot pass both -%c and -%c\n",
+                        arg_int->result->shorto, conflicts[i]->shorto);
+                return EXIT_FAILURE;
             }
         }
     }
