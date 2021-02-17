@@ -14,10 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "app.h"
+#include "cmdapp.h"
 #include <stdio.h>
 
-void setup_options(cmdapp_t* app, cmdopt_t* file, cmdopt_t* eval) {
+static void setup_options(cmdapp_t* app, cmdopt_t* file, cmdopt_t* eval) {
     cmdopt_t* file_confl[] = { eval, NULL };
     cmdopt_t* eval_confl[] = { file, NULL };
     cmdapp_set(

@@ -1,4 +1,4 @@
-// cmdapp: app.h
+// cmdapp: cmdapp.h
 // Copyright (C) 2021 Ethan Uppal
 //
 // This program is free software: you can redistribute it and/or modify
@@ -109,5 +109,8 @@ int cmdapp_run(cmdapp_t* app);
 // Returns a pointer to an array of standalone command line arguments, or NULL
 // if none exist.
 cmdargs_t* cmdapp_getargs(cmdapp_t* app);
+
+// Prints a formatted error message to stderr.
+void cmdapp_error(cmdapp_t* app, const char* fmt, ...);
 
 #endif /* _CMDAPP_APP_H */

@@ -1,4 +1,4 @@
-// cmdapp: app.c
+// cmdapp: cmdapp.c
 // Copyright (C) 2021 Ethan Uppal
 //
 // This program is free software: you can redistribute it and/or modify
@@ -14,12 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "app.h"
+#include "cmdapp.h"
 #include <stdio.h>
 #include <string.h>
+#include <stdarg.h>
 
+#define _COL_RED "\e[31;1m"
+#define _COL_RESET "\e[m"
 #define eprintf(fmt, ...) \
-    fprintf(stderr, "\e[31;1merror:\e[m " fmt, ##__VA_ARGS__);
+    fprintf(stderr, _COL_RED "error:" _COL_RESET " " fmt, ##__VA_ARGS__);
 
 typedef struct _cmdopt_internal_t {
     // The option that this internal representation refers to
@@ -34,7 +37,7 @@ typedef struct _cmdopt_internal_t {
 
 static inline size_t _argvlen(void** argv) {
     size_t length = 0;
-    while (*argv++) length++;
+    while (*argv) argv++, length++;
     return length;
 }
 
@@ -310,4 +313,26 @@ cmdargs_t* cmdapp_getargs(cmdapp_t* app) {
         return NULL;
     }
     return &app->_args;
+}
+
+// https://stackoverflow.com/questions/11350878/how-can-i-determine-if-the-operating-system-is-posix-in-c
+#if defined (__unix__) || (defined (__APPLE__) && defined (__MACH__))
+#include <unistd.h>
+#endif
+
+void cmdapp_error(cmdapp_t* app, const char* fmt, ...) {
+    #ifdef _POSIX_VERSION
+    if (!isatty(STDERR_FILENO) && getenv("CMDAPP_COLOR_ALWAYS") == NULL) {
+            fprintf(stderr, "%s: error: ", app->_info.program);
+    } else {
+        fprintf(stderr, "%s: " _COL_RED "error: " _COL_RESET,
+                app->_info.program);
+    }
+    #else
+    fprintf(stderr, "%s: error: ", app->_info.program);
+    #endif /* _POSIX_VERSION */
+    va_list valist;
+    va_start(valist, fmt);
+    vfprintf(stderr, fmt, valist);
+    va_end(valist);
 }
