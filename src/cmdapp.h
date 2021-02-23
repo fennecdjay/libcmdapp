@@ -22,6 +22,14 @@
 #include <stddef.h>
 #include <stdlib.h>
 
+// So it works on windows
+#ifndef EXIT_FAILURE
+#define EXIT_FAILURE 1
+#endif
+#ifndef EXIT_SUCCESS
+#define EXIT_SUCCESS 0
+#endif
+
 typedef uint8_t cmdopt_flags_t;
 typedef uint8_t cmdapp_mode_t;
 
@@ -71,6 +79,8 @@ typedef struct {
     char** _argv;
     cmdapp_mode_t _mode;
     cmdapp_info_t _info;
+    int _custom_help;
+    int _custom_ver;
     size_t _length;
     size_t _capacity;
     cmdopt_internal_t** _start;

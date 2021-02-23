@@ -46,6 +46,8 @@ void cmdapp_init(cmdapp_t* app, int argc, char** argv, cmdapp_mode_t mode,
     app->_argc = argc;
     app->_argv = argv;
     app->_mode = mode;
+    app->_custom_help = 0;
+    app->_custom_ver = 0;
     app->_length = 0;
     app->_capacity = 4;
     app->_start = malloc(sizeof(cmdarg_internal_t*) * app->_capacity);
@@ -77,6 +79,13 @@ void cmdapp_set(cmdapp_t* app, char shorto, const char* longo, uint8_t flags,
                 cmdopt_t** conflicts, const char* description,
                 cmdopt_t* option)
 {
+
+    if (strncmp(longo, "help", 5) == 0) {
+        app->_custom_help = 1;
+    } else if (strncmp(longo, "version", 8) == 0) {
+        app->_custom_ver = 1;
+    }
+
     option->shorto = shorto;
     option->longo = longo;
     option->flags = flags;
@@ -128,6 +137,14 @@ void cmdapp_print_help(cmdapp_t* app) {
             printf("=ARG");
         }
         fputc('\n', stdout);
+    }
+    if (!app->_custom_help) {
+        printf("%*s%s\r  --help\n", app->_info.help_des_offset, "",
+               "Display this information");
+    }
+    if (!app->_custom_ver) {
+        printf("%*s%s\r  --version\n", app->_info.help_des_offset, "",
+               "Display program version information");
     }
 }
 
@@ -235,10 +252,10 @@ int cmdapp_run(cmdapp_t* app) {
                     }
                 }
             } else {
-                if (strcmp(current, "--help") == 0) {
+                if (strncmp(current, "--help", 7) == 0) {
                     cmdapp_print_help(app);
                     return EXIT_SUCCESS;
-                } else if (strcmp(current, "--version") == 0) {
+                } else if (strncmp(current, "--version", 10) == 0) {
                     cmdapp_print_version(app);
                     return EXIT_SUCCESS;
                 }
@@ -316,17 +333,17 @@ cmdargs_t* cmdapp_getargs(cmdapp_t* app) {
 }
 
 // https://stackoverflow.com/questions/11350878/how-can-i-determine-if-the-operating-system-is-posix-in-c
-#if defined (__unix__) || (defined (__APPLE__) && defined (__MACH__))
+#if defined(__unix__) || (defined(__APPLE__) && defined(__MACH__))
 #include <unistd.h>
 #endif
 
 void cmdapp_error(cmdapp_t* app, const char* fmt, ...) {
     #ifdef _POSIX_VERSION
-    if (!isatty(STDERR_FILENO) && getenv("CMDAPP_COLOR_ALWAYS") == NULL) {
-            fprintf(stderr, "%s: error: ", app->_info.program);
-    } else {
+    if (isatty(STDERR_FILENO) || (getenv("CMDAPP_COLOR_ALWAYS") != NULL)) {
         fprintf(stderr, "%s: " _COL_RED "error: " _COL_RESET,
                 app->_info.program);
+    } else {
+        fprintf(stderr, "%s: error: ", app->_info.program);
     }
     #else
     fprintf(stderr, "%s: error: ", app->_info.program);
