@@ -57,7 +57,7 @@ void cmdapp_init(cmdapp_t* app, int argc, char** argv, cmdapp_mode_t mode,
 
 void cmdapp_destroy(cmdapp_t* app) {
     for (size_t i = 0; i < app->_length; i++) {
-        free(app->_start[app->_length]);
+        free(app->_start[i]);
     }
     free(app->_start);
     free(app->_args.contents);
