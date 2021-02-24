@@ -254,9 +254,11 @@ int cmdapp_run(cmdapp_t* app) {
             } else {
                 if (strncmp(current, "--help", 7) == 0) {
                     cmdapp_print_help(app);
+                    app->_mode |= _CMDAPP_MODE_EXIT;
                     return EXIT_SUCCESS;
                 } else if (strncmp(current, "--version", 10) == 0) {
                     cmdapp_print_version(app);
+                    app->_mode |= _CMDAPP_MODE_EXIT;
                     return EXIT_SUCCESS;
                 }
                 eprintf("Unrecognized command line option %s\n", current);

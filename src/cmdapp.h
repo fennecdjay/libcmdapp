@@ -48,6 +48,7 @@ typedef struct {
 #define CMDAPP_MODE_SHORTARG  0b00000001
 #define CMDAPP_MODE_SILENT    0b00000000
 #define CMDAPP_MODE_PRINT     0b00000010
+#define _CMDAPP_MODE_EXIT     0b10000000
 
 // Returns nonzero if the option was provided to the app
 #define cmdopt_exists(opt)      ((opt).flags & CMDOPT_EXISTS)
@@ -87,6 +88,9 @@ typedef struct {
     cmdargs_t _args;
     cmdapp_procedure_t _proc;
 } cmdapp_t;
+
+// Returns nonzero if the program should terminate. Zero otherwise.
+#define cmdapp_should_exit(app) ((app)->_mode & _CMDAPP_MODE_EXIT)
 
 // Initializes a cmdapp_t with the given program environment, mode and metadata.
 void cmdapp_init(cmdapp_t* app, int argc, char** argv, cmdapp_mode_t mode,
