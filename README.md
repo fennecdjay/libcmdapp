@@ -31,6 +31,24 @@ Not only does `cmdapp_run` terminate with all options and arguments in the prope
 
 If you have a interface like `-Dfoo file1 -Dbar file1` which will analyze `file1` twice with different definitions, using normal parsing will give you `-D=bar` and args=`file1, file1`. However, with procedural parsing you will get: `-D=foo`, `file1`, `-D=bar`, `file1`. It's also important to note that the `cmdopt_t`s on the user side will be set as well, so you can refer to as many of them as you want when you come across an arg. This is useful if you have `-a -b file1 -a file1` and you want the first analysis of `file1` to be in both modes `a` and `b`.
 
+### Building
+
+## Building
+
+First, clone the repo and move in it
+```sh
+git clone https://github.com/euppal/libcmdarg
+cd libcmdarg
+```
+
+To build libcmdapp, use
+```sh
+make
+```
+this will build the static and dynamic libraries, along with a test program (called demo).  
+
+> you can build the static library using `make static` and the dynamic one with `make dynamic`
+
 ### Usage
 
 You can initialize an app object with:
