@@ -107,8 +107,9 @@ void cmdapp_set(cmdapp_t* app, char shorto, const char* longo, uint8_t flags,
     cmdapp_append(app, arg_int);
 }
 
-void cmdapp_enable_procedure(cmdapp_t* app, cmdapp_procedure_t proc) {
+void cmdapp_enable_procedure(cmdapp_t* app, cmdapp_procedure_t proc, void *user_data) {
     app->_proc = proc;
+    app->_user_data = user_data;
 }
 
 void cmdapp_print_help(cmdapp_t* app) {
@@ -212,7 +213,7 @@ int cmdapp_run(cmdapp_t* app) {
                                       sizeof(char*) * args_cap); \
     } \
     if (app->_proc) { \
-        app->_proc(NULL, arg, true); \
+        app->_proc(app->_user_data, NULL, arg); \
     } \
     app->_args.contents[app->_args.length++] = arg;
 
@@ -266,7 +267,7 @@ int cmdapp_run(cmdapp_t* app) {
             }
             arg_int->result->flags |= CMDOPT_EXISTS;
             if (app->_proc) {
-                app->_proc(arg_int->result, NULL, false);
+                app->_proc(app->_user_data, arg_int->result, NULL);
             }
         } else if (IS_SHORT_FLAG(current)) {
             if (app->_mode | CMDAPP_MODE_SHORTARG) {
@@ -292,7 +293,7 @@ int cmdapp_run(cmdapp_t* app) {
                 }
                 arg_int->result->flags |= CMDOPT_EXISTS;
                 if (app->_proc) {
-                    app->_proc(arg_int->result, NULL, false);
+                    app->_proc(app->_user_data, arg_int->result, NULL);
                 }
             } else /* app->_mode | CMDAPP_MODE_MULTIFLAG */ {
                 for (size_t j = 1; current[j]; j++) {

@@ -73,7 +73,7 @@ typedef struct {
     const char** contents;
 } cmdargs_t;
 
-typedef void (*cmdapp_procedure_t)(cmdopt_t* option, const char* arg, bool is_plain_arg);
+typedef void (*cmdapp_procedure_t)(void *data, cmdopt_t* option, const char* arg);
 
 typedef struct {
     int _argc;
@@ -87,6 +87,7 @@ typedef struct {
     cmdopt_internal_t** _start;
     cmdargs_t _args;
     cmdapp_procedure_t _proc;
+    void *_user_data;
 } cmdapp_t;
 
 // Returns nonzero if the program should terminate. Zero otherwise.
@@ -114,7 +115,8 @@ void cmdapp_print_version(cmdapp_t* app);
 
 // Sets the cmdapp_t's procedural parsing function to the given function. If set
 // to NULL, it disables procedural parsing (default).
-void cmdapp_enable_procedure(cmdapp_t* app, cmdapp_procedure_t proc);
+// user_data will be passed as an argument to the procedure
+void cmdapp_enable_procedure(cmdapp_t* app, cmdapp_procedure_t proc, void *user_data);
 
 // Returns EXIT_SUCCESS on success and EXIT_FAILURE otherwise (printing a
 // diagnostic to stderr if configured)
