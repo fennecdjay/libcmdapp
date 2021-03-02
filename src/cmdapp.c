@@ -134,7 +134,7 @@ void cmdapp_print_help(cmdapp_t* app) {
         if (arg_int->result->longo) {
             printf(", --%s", arg_int->result->longo);
         }
-        if (arg_int->result->flags | CMDOPT_TAKESARG) {
+        if (arg_int->result->flags & CMDOPT_TAKESARG) {
             printf("=ARG");
         }
         fputc('\n', stdout);
