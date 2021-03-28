@@ -1,4 +1,4 @@
-# libcmdarg
+# libcmdapp
 
 A customizable command option and argument parsing library written in C.
 
@@ -33,8 +33,6 @@ If you have a interface like `-Dfoo file1 -Dbar file1` which will analyze `file1
 
 ### Building
 
-## Building
-
 First, clone the repo and move in it
 ```sh
 git clone https://github.com/euppal/libcmdapp
@@ -45,7 +43,7 @@ To build libcmdapp, use
 ```sh
 make
 ```
-this will build the static and dynamic libraries, along with a test program (called demo).  
+This will build the static and dynamic libraries, along with a test program (called demo).  
 
 > you can build the static library using `make static` and the dynamic one with `make dynamic`
 
