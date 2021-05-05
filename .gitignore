@@ -3,3 +3,4 @@ debug/main
 .o
 .a
 .so
+.DS_Store
