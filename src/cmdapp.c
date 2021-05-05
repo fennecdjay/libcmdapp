@@ -240,7 +240,7 @@ int cmdapp_run(cmdapp_t* app) {
             }
 
             if ((arg_int = cmdapp_search(app, 0, current + 2))) {
-                if (arg_int->result->flags | CMDOPT_TAKESARG) {
+                if (arg_int->result->flags & CMDOPT_TAKESARG) {
                     if (arg == NULL) {
                         eprintf("%s expects an argument\n", current);
                         return EXIT_FAILURE;
@@ -270,7 +270,7 @@ int cmdapp_run(cmdapp_t* app) {
                 app->_proc(app->_user_data, arg_int->result, NULL);
             }
         } else if (IS_SHORT_FLAG(current)) {
-            if (app->_mode | CMDAPP_MODE_SHORTARG) {
+            if (app->_mode & CMDAPP_MODE_SHORTARG) {
                 if ((arg_int = cmdapp_search(app, current[1], NULL))) {
                     arg_int->result->value = NULL;
                     if (arg_int->result->flags | CMDOPT_TAKESARG) {
