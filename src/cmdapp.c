@@ -245,6 +245,7 @@ int cmdapp_run(cmdapp_t* app) {
                         eprintf("%s expects an argument\n", current);
                         return EXIT_FAILURE;
                     }
+                } else if (arg_int->result->flags & CMDOPT_MAYTAKEARG) {
                     arg_int->result->value = arg;
                 } else {
                     if (arg != NULL) {
