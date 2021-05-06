@@ -13,7 +13,6 @@ endif
 all: static dynamic demo
 
 .PHONY: static dynamic
-.PHONY: static
 static: libcmdapp.a
 dynamic: libcmdapp.so
 
