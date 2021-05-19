@@ -1,6 +1,6 @@
 debug/main.dSYM/Contents/Resources/DWARF/main
 debug/main
-.o
-.a
-.so
+*.o
+*.a
+*.so
 .DS_Store
