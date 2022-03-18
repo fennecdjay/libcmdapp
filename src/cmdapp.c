@@ -238,13 +238,13 @@ int cmdapp_run(cmdapp_t* app) {
                 *arg = 0;
                 arg++;
             }
-
             if ((arg_int = cmdapp_search(app, 0, current + 2))) {
                 if (arg_int->result->flags & CMDOPT_TAKESARG) {
-                    if (arg == NULL) {
+                    if (arg == NULL || *arg == 0) {
                         eprintf("%s expects an argument\n", current);
                         return EXIT_FAILURE;
                     }
+                    arg_int->result->value = arg;
                 } else if (arg_int->result->flags & CMDOPT_MAYTAKEARG) {
                     arg_int->result->value = arg;
                 } else {
