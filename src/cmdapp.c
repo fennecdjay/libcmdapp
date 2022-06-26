@@ -347,8 +347,7 @@ cmdargs_t* cmdapp_getargs(cmdapp_t* app) {
 void cmdapp_error(cmdapp_t* app, const char* fmt, ...) {
     #ifdef _POSIX_VERSION
     if (isatty(STDERR_FILENO) || (getenv("CMDAPP_COLOR_ALWAYS") != NULL)) {
-        fprintf(stderr, "%s: " _COL_RED "error: " _COL_RESET,
-                app->_info.program);
+        fprintf(stderr, "%s: {R+}error:{0} ", app->_info.program);
     } else {
         fprintf(stderr, "%s: error: ", app->_info.program);
     }
