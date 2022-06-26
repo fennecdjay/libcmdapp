@@ -14,15 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+#include "termcolor.h"
 #include "cmdapp.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
 
-#define _COL_RED "\e[31;1m"
-#define _COL_RESET "\e[m"
 #define eprintf(fmt, ...) \
-    fprintf(stderr, _COL_RED "error:" _COL_RESET " " fmt, ##__VA_ARGS__);
+    tcol_fprintf(stderr, "{R+}error:{0}" fmt, ##__VA_ARGS__);
 
 typedef struct _cmdopt_internal_t {
     // The option that this internal representation refers to
@@ -114,37 +113,41 @@ void cmdapp_enable_procedure(cmdapp_t* app, cmdapp_procedure_t proc, void *user_
 
 void cmdapp_print_help(cmdapp_t* app) {
     if (app->_info.synopses && *app->_info.synopses) {
-        printf("Usage: %s %s\n", app->_argv[0], *app->_info.synopses);
+        tcol_printf("{Y}Usage:{0} {+}%s{0} %s\n", app->_argv[0], *app->_info.synopses);
         for (size_t i = 1; app->_info.synopses[i]; i++) {
-            printf("   or: %s %s\n", app->_argv[0], app->_info.synopses[i]);
+            printf("   or: {+}%s{0} %s\n", app->_argv[0], app->_info.synopses[i]);
         }
     } else {
-        printf("Usage: %s [OPTION]... ARG...\n", app->_argv[0]);
+        tcol_printf("{Y}Usage:{0} {+}%s{0} {G}[OPTION]{-}...{0} {M}ARG {-}...{0}\n", app->_argv[0]);
     }
     printf("\n");
-    printf("%s\n", app->_info.description);
+    tcol_printf("{-}%s{0}\n", app->_info.description);
     if (!app->_length)
         return;
     printf("\n");
-    printf("Options:\n");
+    tcol_printf("{Y}Options:{0}\n");
     for (size_t i = 0; i < app->_length; i++) {
         cmdarg_internal_t* arg_int = app->_start[i];
-        printf("%*s%s\r", app->_info.help_des_offset, "", arg_int->description);
-        printf("  -%c", arg_int->result->shorto);
+        tcol_printf("%*s%s\r", app->_info.help_des_offset, "", arg_int->description);
+        if(arg_int->result->shorto) {
+          tcol_printf("  {G}-%c{0}", arg_int->result->shorto);
+        } else {
+          tcol_printf("   {G}-{0}");
+        }
         if (arg_int->result->longo) {
-            printf(", --%s", arg_int->result->longo);
+            tcol_printf(", {G}--%s{0}", arg_int->result->longo);
         }
         if (arg_int->result->flags & CMDOPT_TAKESARG) {
-            printf("=ARG");
+            tcol_printf("{M}=ARG{0}");
         }
         fputc('\n', stdout);
     }
     if (!app->_custom_help) {
-        printf("%*s%s\r  --help\n", app->_info.help_des_offset, "",
+        tcol_printf("%*s%s\r  {+G}--help{0}\n", app->_info.help_des_offset, "",
                "Display this information");
     }
     if (!app->_custom_ver) {
-        printf("%*s%s\r  --version\n", app->_info.help_des_offset, "",
+        tcol_printf("%*s%s\r  {+G}--version{0}\n", app->_info.help_des_offset, "",
                "Display program version information");
     }
 }
@@ -263,7 +266,7 @@ int cmdapp_run(cmdapp_t* app) {
                     app->_mode |= _CMDAPP_MODE_EXIT;
                     return EXIT_SUCCESS;
                 }
-                eprintf("Unrecognized command line option %s\n", current);
+                eprintf("Unrecognized command line option %s, try --help\n", current);
                 return EXIT_FAILURE;
             }
             arg_int->result->flags |= CMDOPT_EXISTS;
@@ -288,7 +291,7 @@ int cmdapp_run(cmdapp_t* app) {
                         return EXIT_FAILURE;
                     }
                 } else {
-                    eprintf("Unrecognized command line option -%c\n",
+                    eprintf("Unrecognized command line option -%c, try --help\n",
                             current[1]);
                     return EXIT_FAILURE;
                 }
