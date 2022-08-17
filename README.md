@@ -35,7 +35,7 @@ If you have a interface like `-Dfoo file1 -Dbar file1` which will analyze `file1
 
 First, clone the repo and move in it
 ```sh
-git clone https://github.com/euppal/libcmdapp
+git clone https://github.com/Gwion/libcmdapp
 cd libcmdapp
 ```
 
